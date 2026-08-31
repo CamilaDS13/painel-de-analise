@@ -3,168 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Painéis - Operações</title>
+    <title>Painel de Análise de Dados | Pinheiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4f46e5;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-color: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
+            --orange: #f38218;
+            --dark-blue: #161245;
+            --white: #ffffff;
+            --accent-glow: rgba(255, 255, 255, 0.2);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 40px 20px;
+            background-color: var(--orange);
+            font-family: 'Open Sans', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- ARCO AZUL DO FUNDO --- */
+        .bg-curve {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            background-color: var(--dark-blue);
+            clip-path: ellipse(100% 100% at 100% 50%);
+            z-index: 1;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
+            width: 95%;
+            max-width: 1600px;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 20px;
         }
 
+        /* --- TÍTULO MAIS BAIXO --- */
         header {
-            text-align: center;
+            padding-top: 60px; /* Desci o título aqui */
             margin-bottom: 40px;
         }
-
         header h1 {
-            font-size: 28px;
-            color: var(--primary-color);
-            margin-bottom: 8px;
+            color: var(--white);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
         }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 15px;
-            margin: 0;
+        .main-content {
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
         }
 
-        .cards-grid {
+        /* --- MOLDURA DOS CARDS (AUMENTADA) --- */
+        .dashboard-frame {
+            background-color: var(--dark-blue);
+            flex: 1.2;
+            min-height: 550px; /* Aumentei a altura mínima */
+            border-radius: 50px;
+            padding: 45px;
+            border: 6px solid var(--white);
+            display: flex;
+            gap: 25px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            animation: floatFrame 4s ease-in-out infinite;
+        }
+
+        @keyframes floatFrame {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* --- COLUNA EMBARCAÇÕES --- */
+        .vessel-col { flex: 0.8; }
+        .card-large {
+            background: var(--white);
+            height: 100%;
+            border-radius: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .card-large h2 {
+            color: var(--dark-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .card-large .icon-ship { font-size: 100px; }
+
+        /* --- GRADE DE 6 CARDS --- */
+        .grid-small {
+            flex: 2;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             gap: 20px;
         }
 
-        .panel-card {
-            background: var(--card-bg);
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+        .card-small {
+            background: var(--white);
+            border-radius: 30px;
+            text-decoration: none;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            border: 1px solid var(--border-color);
-            text-decoration: none;
-        }
-
-        .panel-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-color: var(--primary-color);
-        }
-
-        .card-content h3 {
-            font-size: 18px;
-            color: var(--text-color);
-            margin: 0 0 8px 0;
-        }
-
-        .card-content p {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin: 0 0 20px 0;
-            line-height: 1.5;
-        }
-
-        .card-footer {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary-color);
-            display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            padding: 20px;
+            transition: 0.3s;
+            text-align: center;
+            border: 2px solid transparent;
         }
+
+        .card-small span {
+            color: var(--dark-blue);
+            font-weight: 800;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-top: 12px;
+            line-height: 1.2;
+        }
+
+        .card-icon { font-size: 40px; }
+
+        /* --- HOVERS --- */
+        .card-large:hover, .card-small:hover {
+            transform: scale(1.05);
+            background-color: #fff;
+            border-color: var(--orange);
+            box-shadow: 0 0 30px rgba(243, 130, 24, 0.4);
+        }
+
+        /* --- ÁREA DO MASCOTE --- */
+        .mascot-area {
+            flex: 0.8;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100%;
+        }
+
+        .mascot-img {
+            max-height: 90vh; /* Boneco bem grande */
+            width: auto;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+            z-index: 5;
+            animation: floatMascot 5s ease-in-out infinite;
+        }
+
+        @keyframes floatMascot {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(1deg); }
+        }
+
+        /* --- LOGO --- */
+        footer { padding: 20px 0; }
+        .footer-logo { width: 280px; }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Central de Painéis Operacionais</h1>
-        <p>Acesse rapidamente todas as ferramentas e relatórios da operação</p>
-    </header>
+    <div class="bg-curve"></div>
 
-    <div class="cards-grid">
-        <!-- Card 1: Campanhas de Frete -->
-        <a href="https://camilads13.github.io/Campanhas-de-frete-realizados-na-vipcommerce-em-2026/" class="panel-card" target="_blank">
-            <div class="card-content">
-                <h3>📦 Campanhas de Frete</h3>
-                <p>Acompanhamento detalhado e consolidado de pedidos, investimentos e valores em compras por campanha.</p>
-            </div>
-            <div class="card-footer">Acessar painel &rarr;</div>
-        </a>
+    <div class="container">
+        <header>
+            <h1>Painel de Análise de Dados</h1>
+        </header>
 
-        <!-- Card 2: Ruptura -->
-        <a href="https://camilads13.github.io/RUPTURAS-DE-COMPRAS-VIP-COMMERCE/" class="panel-card" target="_blank">
-            <div class="card-content">
-                <h3>⚠️ Controle de Ruptura</h3>
-                <p>Monitoramento de itens em falta, índices de ruptura e impacto nas vendas da operação.</p>
-            </div>
-            <div class="card-footer">Acessar painel &rarr;</div>
-        </a>
+        <div class="main-content">
+            <div class="dashboard-frame">
+                
+                <!-- EMBARCAÇÕES -->
+                <div class="vessel-col">
+                    <a href="https://camilads13.github.io/Vendas-das-Embarca-es/" class="card-large">
+                        <h2>Venda<br>Embarcações</h2>
+                        <div class="icon-ship">🚢</div>
+                    </a>
+                </div>
 
-        <!-- Card 3: Abandono de Carrinho -->
-        <a href="https://camilads13.github.io/abandono-de-carrinho-no-app-e-site/" class="panel-card" target="_blank">
-            <div class="card-content">
-                <h3>🛒 Abandono de Carrinho</h3>
-                <p>Análise de carrinhos não finalizados, métricas de recuperação e comportamento do cliente.</p>
+                <!-- GRADE 6 -->
+                <div class="grid-small">
+                    <a href="https://camilads13.github.io/Campanhas-de-frete-realizados-na-vipcommerce-em-2026/" class="card-small">
+                        <div class="card-icon">🚚</div>
+                        <span>Campanhas<br>de Frete</span>
+                    </a>
+                    <a href="https://camilads13.github.io/RUPTURAS-DE-COMPRAS-VIP-COMMERCE/" class="card-small">
+                        <div class="card-icon">⚠️</div>
+                        <span>Controle<br>de Ruptura</span>
+                    </a>
+                    <a href="https://camilads13.github.io/abandono-de-carrinho-no-app-e-site/" class="card-small">
+                        <div class="card-icon">🛒</div>
+                        <span>Abandono<br>de Carrinho</span>
+                    </a>
+                    <a href="https://camilads13.github.io/liquida-app/" class="card-small">
+                        <div class="card-icon">📅</div>
+                        <span>Datas<br>Dobradas</span>
+                    </a>
+                    <a href="https://camilads13.github.io/cupons-de-desconto/" class="card-small">
+                        <div class="card-icon">🎟️</div>
+                        <span>Cupons de<br>Desconto</span>
+                    </a>
+                    <a href="https://camilads13.github.io/indique-e-ganhe/" class="card-small">
+                        <div class="card-icon">🤝</div>
+                        <span>Indique<br>e Ganhe</span>
+                    </a>
+                </div>
             </div>
-            <div class="card-footer">Acessar painel &rarr;</div>
-        </a>
 
-        <!-- Card 4: Datas Dobradas -->
-        <a href="https://camilads13.github.io/liquida-app/" class="panel-card" target="_blank">
-            <div class="card-content">
-                <h3>📅 Datas Dobradas</h3>
-                <p>Acompanhamento de ações especiais de um dia (tipo 8.8, 7.7) e liquidações específicas no app.</p>
+            <!-- ÁREA DO BONECO -->
+            <div class="mascot-area">
+                <!-- Verifique se o arquivo se chama exatamente mascote.png na sua pasta -->
+                <img src="mascote.png" class="mascot-img" alt="Mascote Pinheiro">
             </div>
-            <div class="card-footer">Acessar painel &rarr;</div>
-        </a>
+        </div>
 
-        <!-- Card 5: Cupons de Desconto -->
-        <a href="https://camilads13.github.io/cupons-de-desconto/" class="panel-card" target="_blank">
-            <div class="card-content">
-                <h3>🎟️ Cupons de Desconto</h3>
-                <p>Relatório de uso de cupons de descontos aplicados na plataforma em datas específicas.</p>
-            </div>
-            <div class="card-footer">Acessar painel &rarr;</div>
-        </a>
-
-        <!-- Card 6: Indique e Ganhe -->
-        <a href="https://camilads13.github.io/indique-e-ganhe/" class="panel-card" target="_blank">
-            <div class="card-content">
-                <h3>🤝 Indique e Ganhe</h3>
-                <p>Monitoramento das ações de indicação, conversão de novos usuários e distribuição de benefícios.</p>
-            </div>
-            <div class="card-footer">Acessar painel &rarr;</div>
-        </a>
-
-        <!-- Card 7: Vendas das Embarcações -->
-        <a href="https://camilads13.github.io/Vendas-das-Embarca-es/" class="panel-card" target="_blank">
-            <div class="card-content">
-                <h3>⛵ Vendas das Embarcações</h3>
-                <p>Acompanhamento e monitoramento dedicado ao desempenho de vendas das embarcações.</p>
-            </div>
-            <div class="card-footer">Acessar painel &rarr;</div>
-        </a>
+        <footer>
+            <!-- Verifique se o arquivo se chama exatamente logo.png na sua pasta -->
+            <img src="logo.png" class="footer-logo" alt="Supermercado Pinheiro">
+        </footer>
     </div>
-</div>
 
 </body>
 </html>
