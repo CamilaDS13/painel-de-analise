@@ -10,7 +10,6 @@
             --orange: #f38218;
             --dark-blue: #161245;
             --white: #ffffff;
-            --accent-glow: rgba(255, 255, 255, 0.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,16 +22,14 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
 
-        /* --- ARCO AZUL DO FUNDO --- */
         .bg-curve {
             position: fixed;
             right: 0;
             top: 0;
             height: 100%;
-            width: 50%;
+            width: 55%;
             background-color: var(--dark-blue);
             clip-path: ellipse(100% 100% at 100% 50%);
             z-index: 1;
@@ -40,27 +37,27 @@
 
         .container {
             width: 95%;
-            max-width: 1600px;
+            max-width: 1800px;
             height: 100%;
+            margin: 0 auto;
             position: relative;
             z-index: 2;
             display: flex;
             flex-direction: column;
-            padding-bottom: 20px;
+            padding: 40px 0;
         }
 
-        /* --- TÍTULO MAIS BAIXO --- */
         header {
-            padding-top: 60px; /* Desci o título aqui */
-            margin-bottom: 40px;
+            margin-bottom: 20px;
+            padding-left: 20px;
         }
         header h1 {
             color: var(--white);
             font-family: 'Montserrat', sans-serif;
-            font-size: 50px;
+            font-size: 55px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
         }
 
         .main-content {
@@ -68,20 +65,20 @@
             flex: 1;
             align-items: center;
             justify-content: space-between;
-            gap: 30px;
+            gap: 20px;
         }
 
-        /* --- MOLDURA DOS CARDS (AUMENTADA) --- */
         .dashboard-frame {
             background-color: var(--dark-blue);
-            flex: 1.2;
-            min-height: 550px; /* Aumentei a altura mínima */
-            border-radius: 50px;
-            padding: 45px;
-            border: 6px solid var(--white);
+            flex: 1.4;
+            height: 80%;
+            min-height: 550px;
+            border-radius: 60px;
+            padding: 40px;
+            border: 8px solid var(--white);
             display: flex;
             gap: 25px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
             animation: floatFrame 4s ease-in-out infinite;
         }
 
@@ -90,12 +87,11 @@
             50% { transform: translateY(-15px); }
         }
 
-        /* --- COLUNA EMBARCAÇÕES --- */
         .vessel-col { flex: 0.8; }
         .card-large {
             background: var(--white);
             height: 100%;
-            border-radius: 35px;
+            border-radius: 45px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -103,37 +99,37 @@
             text-align: center;
             padding: 30px;
             text-decoration: none;
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
         .card-large h2 {
             color: var(--dark-blue);
             font-family: 'Montserrat', sans-serif;
-            font-size: 24px;
+            font-size: 26px;
             margin-bottom: 20px;
+            line-height: 1.1;
         }
-        .card-large .icon-ship { font-size: 100px; }
+        .icon-ship { font-size: 110px; }
 
-        /* --- GRADE DE 6 CARDS --- */
         .grid-small {
             flex: 2;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
+            gap: 25px;
         }
 
         .card-small {
             background: var(--white);
-            border-radius: 30px;
+            border-radius: 40px;
             text-decoration: none;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             text-align: center;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
         }
 
         .card-small span {
@@ -141,45 +137,49 @@
             font-weight: 800;
             font-size: 14px;
             text-transform: uppercase;
-            margin-top: 12px;
+            margin-top: 15px;
             line-height: 1.2;
         }
 
-        .card-icon { font-size: 40px; }
+        .card-icon { font-size: 45px; }
 
-        /* --- HOVERS --- */
         .card-large:hover, .card-small:hover {
             transform: scale(1.05);
-            background-color: #fff;
-            border-color: var(--orange);
-            box-shadow: 0 0 30px rgba(243, 130, 24, 0.4);
+            border-color: #f38218;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
-        /* --- ÁREA DO MASCOTE --- */
         .mascot-area {
-            flex: 0.8;
+            flex: 1;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: flex-end;
             height: 100%;
+            padding-right: 20px;
         }
 
         .mascot-img {
-            max-height: 90vh; /* Boneco bem grande */
+            max-height: 85vh;
             width: auto;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
-            z-index: 5;
+            z-index: 10;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
             animation: floatMascot 5s ease-in-out infinite;
         }
 
         @keyframes floatMascot {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(1deg); }
+            50% { transform: translateY(-30px) rotate(1deg); }
         }
 
-        /* --- LOGO --- */
-        footer { padding: 20px 0; }
-        .footer-logo { width: 280px; }
+        footer {
+            margin-top: auto;
+            padding-left: 20px;
+            z-index: 10;
+        }
+        .footer-logo {
+            width: 300px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
 
     </style>
 </head>
@@ -195,53 +195,50 @@
         <div class="main-content">
             <div class="dashboard-frame">
                 
-                <!-- EMBARCAÇÕES -->
                 <div class="vessel-col">
                     <a href="https://camilads13.github.io/Vendas-das-Embarca-es/" class="card-large">
-                        <h2>Venda<br>Embarcações</h2>
+                        <h2>VENDA<br>EMBARCAÇÕES</h2>
                         <div class="icon-ship">🚢</div>
                     </a>
                 </div>
 
-                <!-- GRADE 6 -->
                 <div class="grid-small">
                     <a href="https://camilads13.github.io/Campanhas-de-frete-realizados-na-vipcommerce-em-2026/" class="card-small">
                         <div class="card-icon">🚚</div>
-                        <span>Campanhas<br>de Frete</span>
+                        <span>CAMPANHAS<br>DE FRETE</span>
                     </a>
                     <a href="https://camilads13.github.io/RUPTURAS-DE-COMPRAS-VIP-COMMERCE/" class="card-small">
                         <div class="card-icon">⚠️</div>
-                        <span>Controle<br>de Ruptura</span>
+                        <span>CONTROLE<br>DE RUPTURA</span>
                     </a>
                     <a href="https://camilads13.github.io/abandono-de-carrinho-no-app-e-site/" class="card-small">
                         <div class="card-icon">🛒</div>
-                        <span>Abandono<br>de Carrinho</span>
+                        <span>ABANDONO<br>DE CARRINHO</span>
                     </a>
                     <a href="https://camilads13.github.io/liquida-app/" class="card-small">
                         <div class="card-icon">📅</div>
-                        <span>Datas<br>Dobradas</span>
+                        <span>DATAS<br>DOBRADAS</span>
                     </a>
                     <a href="https://camilads13.github.io/cupons-de-desconto/" class="card-small">
                         <div class="card-icon">🎟️</div>
-                        <span>Cupons de<br>Desconto</span>
+                        <span>CUPONS DE<br>DESCONTO</span>
                     </a>
                     <a href="https://camilads13.github.io/indique-e-ganhe/" class="card-small">
                         <div class="card-icon">🤝</div>
-                        <span>Indique<br>e Ganhe</span>
+                        <span>INDIQUE<br>E GANHE</span>
                     </a>
                 </div>
             </div>
 
-            <!-- ÁREA DO BONECO -->
             <div class="mascot-area">
-                <!-- Verifique se o arquivo se chama exatamente mascote.png na sua pasta -->
-                <img src="mascote.png" class="mascot-img" alt="Mascote Pinheiro">
+                <!-- Link direto do seu novo repositório 'imagens' -->
+                <img src="https://raw.githubusercontent.com/CamilaDS13/imagens/Principal/mascote.png" class="mascot-img" alt="Mascote Pinheiro">
             </div>
         </div>
 
         <footer>
-            <!-- Verifique se o arquivo se chama exatamente logo.png na sua pasta -->
-            <img src="logo.png" class="footer-logo" alt="Supermercado Pinheiro">
+            <!-- Link direto do seu novo repositório 'imagens' -->
+            <img src="https://raw.githubusercontent.com/CamilaDS13/imagens/Principal/logobranca.png" class="footer-logo" alt="Supermercado Pinheiro">
         </footer>
     </div>
 
