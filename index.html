@@ -175,6 +175,14 @@
 
         .footer-info { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--glass-border); color: var(--text-dim); font-size: 11px; text-align: center; }
 
+        @media (max-width: 1200px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .span-2 { grid-column: span 2; }
+        }
+        @media (max-width: 768px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .span-2 { grid-column: span 1; }
+        }
     </style>
 </head>
 <body>
@@ -202,6 +210,7 @@
 
         <div class="bento-grid" id="mainGrid">
             
+            <!-- LINHA 1 -->
             <div class="widget hero-widget span-2" data-cat="all">
                 <h3 style="font-size: 26px;">Olá, Vizinho! 👋</h3>
                 <p style="font-size: 15px; opacity: 0.9; margin-top: 10px;">Bem-vindo ao seu centro de comando operacional. O que vamos analisar hoje?</p>
@@ -223,6 +232,7 @@
                 </div>
             </a>
 
+            <!-- LINHA 2 -->
             <a href="https://camilads13.github.io/abandono-de-carrinho-no-app-e-site/" class="widget" data-cat="operacao">
                 <div class="widget-icon">🛒</div>
                 <div>
@@ -249,6 +259,7 @@
                 </div>
             </a>
 
+            <!-- LINHA 3 -->
             <a href="https://camilads13.github.io/indique-e-ganhe/" class="widget" data-cat="comercial">
                 <div class="widget-icon">🤝</div>
                 <div>
@@ -262,6 +273,17 @@
                 <div>
                     <h3>Datas Dobradas</h3>
                     <p>Picos de venda em ações especiais (7.7, 8.8) e liquidações.</p>
+                </div>
+            </a>
+
+            <!-- NOVO CARD: FRETE ESPECIAL -->
+            <a href="https://camilads13.github.io/FRETE-ESPECIAL/" class="widget span-2" data-cat="comercial" style="border-bottom: 4px solid var(--pinheiro-orange);">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="widget-icon" style="background: rgba(243, 130, 24, 0.1); color: var(--pinheiro-orange); margin-bottom: 0; font-size: 28px; width: 60px; height: 60px;">💎</div>
+                    <div>
+                        <h3 style="color: var(--pinheiro-orange); font-size: 19px;">Frete Especial (Ticket Progressivo)</h3>
+                        <p>Subsídio escalonado por faixas de compra: quanto maior o gasto, mais barato o frete.</p>
+                    </div>
                 </div>
             </a>
 
