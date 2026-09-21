@@ -1,622 +1,438 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Totem & Painel de Ruptura | Rede Pinheiro</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <style>
-    body { font-family: "Plus Jakarta Sans", sans-serif; }
-    .t-act { background:#1e3a8a !important; color:#fff !important; }
-    .t-inact { background:#f1f5f9 !important; color:#475569 !important; }
-    .b-act { background:#1e3a8a !important; color:#fff !important; }
-    .b-inact { background:#f8fafc !important; color:#334155 !important; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Análise de Dados</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Interactive 3D Card Hover Effect */
+        .interactive-card {
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s ease, border-color 0.2s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .favorite-star {
+            transition: all 0.2s ease;
+        }
+        .favorite-star.active {
+            color: #eab308;
+            fill: #eab308;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
-  <!-- NAVBAR -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('portals')">
-        <img src="https://ais-pre-54muiioc772vgmowmnnl3a-809242935731.us-east1.run.app/logoazul.png" onerror="this.onerror=null;this.src='logoazul.png'" alt="Rede Pinheiro" class="h-9 w-auto object-contain" />
-        <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
-        <div class="hidden sm:block">
-          <div class="text-xs font-black text-slate-800">Totem & Ruptura</div>
-          <div class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Operação VipCommerce 2026
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200 w-full md:w-auto justify-center">
-        <button id="btn-tab-portals" onclick="switchTab('portals')" class="flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all t-act">Totem & Portais</button>
-        <button id="btn-tab-analytics" onclick="switchTab('analytics')" class="flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all t-inact">Painel de Ruptura & Gráficos</button>
-      </div>
-      <div class="hidden md:flex items-center gap-3">
-        <div class="text-right leading-tight pr-1">
-          <div class="text-xs font-black" id="live-clock">--:--:--</div>
-          <div class="text-[10px] text-slate-400 capitalize" id="live-date">--</div>
-        </div>
-        <button onclick="toggleSound()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold" id="snd-btn" title="Alternar som">🔊</button>
-        <button onclick="openSyncModal()" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 rounded-xl text-xs font-bold">Sincronizar CSV</button>
-        <button onclick="openAddLinkModal()" class="px-3.5 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold shadow-xs">+ Novo Link</button>
-      </div>
-    </div>
-  </header>
+<body class="text-slate-800 min-h-screen flex flex-col antialiased py-8 sm:py-12">
 
-  <!-- MAIN -->
-  <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex-1">
-    <!-- BANNER MASCOTE PINHEIRO -->
-    <div class="relative bg-gradient-to-r from-emerald-50 via-teal-50/60 to-orange-50/50 rounded-3xl border border-emerald-200 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-4 w-full md:w-auto">
-        <div onclick="handleMascotClick()" class="relative cursor-pointer flex-shrink-0 group select-none" title="Clique no Mascote Pin para comemorar!">
-          <div class="w-20 h-24 sm:w-24 sm:h-28 flex items-center justify-center transition-transform group-hover:scale-105" id="mascot-box">
-            <img src="https://ais-pre-54muiioc772vgmowmnnl3a-809242935731.us-east1.run.app/mascote.png" onerror="this.onerror=null;this.src='mascote.png'" alt="Mascote Pinheiro" class="w-full h-full object-contain filter drop-shadow-md" />
-          </div>
-          <span class="absolute bottom-0 right-0 bg-emerald-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full border-2 border-white shadow">Pin</span>
-        </div>
-        <div class="flex-1 max-w-xl">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-[11px] font-black uppercase px-2 py-0.5 rounded-lg bg-emerald-600 text-white">Mascote Pin • O Bom Vizinho</span>
-            <span class="text-[11px] text-slate-500 font-semibold">VipCommerce & Pinheiro</span>
-          </div>
-          <div class="bg-white/95 rounded-2xl p-3 shadow-xs border border-emerald-200 text-xs sm:text-sm font-semibold flex items-center justify-between gap-2">
-            <p id="mascot-text" class="text-slate-700 leading-snug">"Bom dia! Que bom ver você na Rede Pinheiro, o bom vizinho!"</p>
-            <button onclick="nextMascotTip()" class="p-1.5 text-slate-400 hover:text-emerald-700 rounded-lg font-bold">›</button>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center gap-2.5 w-full md:w-auto justify-end flex-wrap">
-        <button id="banner-btn-portals" onclick="switchTab('portals')" class="px-4 py-2.5 rounded-xl font-bold text-xs border shadow-xs transition-all flex items-center gap-2 b-act">
-          <span>❖</span> Ver Portais
-        </button>
-        <button id="banner-btn-analytics" onclick="switchTab('analytics')" class="px-4 py-2.5 rounded-xl font-bold text-xs border shadow-xs transition-all flex items-center gap-2 b-inact">
-          <span>📈</span> Ver Rupturas
-        </button>
-      </div>
-    </div>
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 flex-1 w-full">
 
-    <!-- ABA 1: PORTAIS -->
-    <div id="tab-portals-view" class="space-y-6" style="display: block;">
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0" id="cat-pills">
-          <button onclick="setCategory('all')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-900 text-white" data-cat="all">Todos os Portais</button>
-          <button onclick="setCategory('frete')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="frete">Frete & Entregas</button>
-          <button onclick="setCategory('campanhas')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="campanhas">Campanhas & App</button>
-          <button onclick="setCategory('gestao')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="gestao">Ruptura & Gestão</button>
-          <button onclick="setCategory('vendas')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="vendas">Vendas Embarcações</button>
-        </div>
-        <div class="relative w-full md:w-80">
-          <input type="text" id="portal-search" oninput="renderPortalCards()" placeholder="🔍 Buscar portal, campanha..." class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white outline-none" />
-        </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5" id="portals-grid"></div>
-      <div class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white rounded-3xl p-5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h3 class="font-bold text-sm text-white">📱 Acesso Móvel para a Equipe de Loja</h3>
-          <p class="text-xs text-blue-200 mt-0.5">Clique em QR Code em qualquer portal para escanear direto no celular da filial.</p>
-        </div>
-        <button onclick="openAddLinkModal()" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow-md whitespace-nowrap">+ Adicionar Novo Portal</button>
-      </div>
-    </div>
+        <!-- Hero Section -->
+        <section class="space-y-2">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Qual vamos analisar hoje?
+            </h1>
+            <p class="text-slate-500 text-sm sm:text-base">
+                Selecione um relatório para visualizar diretamente ou clique em acessar para abrir em nova aba.
+            </p>
+        </section>
 
-    <!-- ABA 2: ANALYTICS -->
-    <div id="tab-analytics-view" class="space-y-6" style="display: none;">
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h3 class="text-sm font-black text-slate-900">Análise de Ruptura & Cancelamento de Pedidos</h3>
-          <span class="text-[11px] font-semibold text-slate-500">Consolidado oficial: 16 Lojas • Atualização Automática</span>
-        </div>
-        <div class="flex items-center gap-3 w-full sm:w-auto">
-          <select id="store-select" onchange="updateAnalytics()" class="w-full sm:w-60 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none">
-            <option value="ALL">Todas as 16 Lojas (Rede Pinheiro)</option>
-          </select>
-          <button onclick="openSyncModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 whitespace-nowrap">Importar CSV</button>
-        </div>
-      </div>
+        <!-- Controls Section: Search & Category Filters -->
+        <section class="space-y-4">
+            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                
+                <!-- Search Input -->
+                <div class="relative flex-1 max-w-md">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Pesquisar análise ou dashboard..." 
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                </div>
 
-      <!-- KPIs -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
-          <span class="text-[11px] font-bold text-slate-500 uppercase">Total Pedidos</span>
-          <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-2" id="kpi-compras">0</div>
-          <span class="text-[11px] text-slate-400 mt-1 block">Faturados no período</span>
-        </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
-          <span class="text-[11px] font-bold text-slate-500 uppercase">Total de Itens</span>
-          <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-2" id="kpi-itens">0</div>
-          <span class="text-[11px] text-slate-400 mt-1 block">Unidades solicitadas</span>
-        </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
-          <span class="text-[11px] font-bold text-slate-500 uppercase">Itens Excluídos</span>
-          <div class="text-2xl sm:text-3xl font-black text-orange-600 mt-2" id="kpi-excluidos">0</div>
-          <span class="text-[11px] text-slate-400 mt-1 block">Ruptura operacional</span>
-        </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
-          <span class="text-[11px] font-bold text-slate-500 uppercase">Taxa Média Ruptura</span>
-          <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-2" id="kpi-taxa">0%</div>
-          <span class="text-[11px] text-slate-400 mt-1 block">Meta: abaixo de 10%</span>
-        </div>
-      </div>
-
-      <!-- Gráficos -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h4 class="font-bold text-sm text-slate-900">Evolução Diária da Taxa de Ruptura (%)</h4>
-              <p class="text-[11px] text-slate-500">Histórico por data de faturamento</p>
+                <!-- Category Filters -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none" id="categoryFilters">
+                    <button data-category="all" class="filter-btn active px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-blue-600 text-white shadow-sm shadow-blue-500/20">
+                        Todos
+                    </button>
+                    <button data-category="fav" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-white border border-slate-200 text-amber-600 hover:bg-amber-50 hover:border-amber-200 flex items-center gap-1">
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
+                        Favoritos
+                    </button>
+                    <button data-category="E-commerce" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        E-commerce
+                    </button>
+                    <button data-category="Vendas" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        Vendas
+                    </button>
+                    <button data-category="Promoções" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        Promoções
+                    </button>
+                    <button data-category="Logística" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        Logística
+                    </button>
+                </div>
             </div>
-            <span class="text-xs font-bold text-orange-600 px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200">Média Diária</span>
-          </div>
-          <div class="relative w-full h-64 bg-slate-50/50 rounded-xl p-2 border border-slate-100 flex items-center justify-center" id="trend-chart"></div>
-          <div class="flex items-center justify-between text-[11px] text-slate-500 mt-2 pt-2 border-t border-slate-100">
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> Taxa Ruptura (%)</span>
-            <span class="text-[10px] text-slate-400">Passe o mouse nos pontos</span>
-          </div>
-        </div>
+        </section>
 
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h4 class="font-bold text-sm text-slate-900">Ranking de Ruptura por Loja (%)</h4>
-              <p class="text-[11px] text-slate-500">Comparativo das 16 filiais</p>
+        <!-- Dashboards Grid -->
+        <section>
+            <div id="dashboardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards dynamically rendered via JS -->
             </div>
-            <div class="flex items-center gap-1 text-[10px] font-bold">
-              <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">&lt;7% Ótimo</span>
-              <span class="px-1.5 py-0.5 rounded bg-orange-100 text-orange-800">&gt;12% Alerta</span>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 space-y-3">
+                <div class="p-4 bg-slate-200/60 rounded-full w-fit mx-auto text-slate-400">
+                    <i data-lucide="search-x" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-base font-semibold text-slate-800">Nenhuma análise encontrada</h3>
+                <p class="text-sm text-slate-500 max-w-sm mx-auto">Tente ajustar a busca ou selecione outra categoria.</p>
             </div>
-          </div>
-          <div class="relative w-full h-64 bg-slate-50/50 rounded-xl p-2 border border-slate-100 overflow-y-auto" id="bar-chart"></div>
-          <div class="flex items-center justify-between text-[11px] text-slate-500 mt-2 pt-2 border-t border-slate-100">
-            <span>Classificação da maior para menor taxa</span>
-            <span class="text-orange-600 font-bold" id="worst-badge">Pior: --</span>
-          </div>
-        </div>
-      </div>
+        </section>
 
-      <!-- Alertas -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
-        <div class="mb-3">
-          <h4 class="text-sm font-bold text-slate-900">⚠️ Alertas de Picos Críticos (Ruptura &gt; 20%)</h4>
-          <p class="text-[11px] text-slate-500">Dias onde a ruptura ultrapassou o patamar de segurança</p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="anomalies-grid"></div>
-      </div>
+    </main>
 
-      <!-- Tabela -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
-          <div>
-            <h4 class="text-sm font-bold text-slate-900">Tabela Detalhada por Loja</h4>
-            <p class="text-[11px] text-slate-500">Consolidado das filiais monitoradas</p>
-          </div>
-          <input type="text" id="table-filter" oninput="renderTable()" placeholder="🔍 Filtrar loja..." class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none" />
+    <!-- Modal Viewer -->
+    <div id="dashboardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm transition-opacity">
+        <div class="bg-white w-full max-w-6xl h-[90vh] rounded-2xl shadow-2xl flex flex-col border border-slate-200 overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+                <div class="flex items-center space-x-3">
+                    <div id="modalIconContainer" class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                        <i id="modalIcon" data-lucide="external-link" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalTitle" class="text-base font-bold text-slate-900">Título da Análise</h3>
+                        <p id="modalCategory" class="text-xs text-slate-500">Categoria</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <a id="modalExternalLink" href="#" target="_blank" rel="noopener noreferrer" 
+                        class="px-3 py-1.5 text-xs font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors flex items-center space-x-1.5" title="Abrir em nova aba">
+                        <span>Abrir na Web</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                    <button id="closeModalBtn" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Iframe Body -->
+            <div class="flex-1 relative bg-slate-100">
+                <div id="iframeLoader" class="absolute inset-0 flex flex-col items-center justify-center space-y-3 bg-white/80 backdrop-blur-sm z-10">
+                    <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs font-medium text-slate-500">Carregando painel...</p>
+                </div>
+                <iframe id="modalIframe" class="w-full h-full border-none" title="Dashboard Preview"></iframe>
+            </div>
+
         </div>
-        <div class="overflow-x-auto rounded-xl border border-slate-200">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                <th class="py-3 px-4">Loja / Filial</th>
-                <th class="py-3 px-4">Pedidos</th>
-                <th class="py-3 px-4">Total Itens</th>
-                <th class="py-3 px-4">Itens Excluídos</th>
-                <th class="py-3 px-4">Taxa Média</th>
-                <th class="py-3 px-4">Pior Registro</th>
-                <th class="py-3 px-4">Status</th>
-              </tr>
-            </thead>
-            <tbody id="store-tbody" class="divide-y divide-slate-100 font-medium"></tbody>
-          </table>
-        </div>
-      </div>
     </div>
-  </main>
 
-  <!-- FOOTER -->
-  <footer class="mt-auto bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3 max-w-7xl w-full mx-auto">
-    <div class="flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-      <span class="font-bold text-slate-700">Rede Pinheiro • O bom vizinho</span>
-      <span class="text-slate-300">|</span>
-      <span>VipCommerce Totem Operacional 2026</span>
-    </div>
-    <div class="flex items-center gap-3">
-      <button onclick="openSyncModal()" class="text-blue-700 hover:underline font-bold">Sincronizar Dados</button>
-      <span class="text-slate-300">•</span>
-      <button onclick="openAddLinkModal()" class="text-orange-600 hover:underline font-bold">Adicionar Portal</button>
-    </div>
-  </footer>
+    <script>
+        const dashboardsData = [
+            {
+                id: 'ruptura',
+                title: 'Ruptura da loja online',
+                url: 'https://camilads13.github.io/RUPTURAS-DE-COMPRAS-VIP-COMMERCE/',
+                category: 'E-commerce',
+                description: 'Análise detalhada de indisponibilidade de itens e ruptura de estoque na loja online (Vip Commerce).',
+                icon: 'package-x',
+                badgeBg: 'bg-rose-50 text-rose-700 border-rose-200'
+            },
+            {
+                id: 'embarcacoes',
+                title: 'Venda das embarcações',
+                url: 'https://camilads13.github.io/Vendas-das-Embarca-es/',
+                category: 'Vendas',
+                description: 'Acompanhamento comercial de desempenho, métricas de faturamento e vendas marítimas/embarcações.',
+                icon: 'anchor',
+                badgeBg: 'bg-amber-50 text-amber-700 border-amber-200'
+            },
+            {
+                id: 'abandono',
+                title: 'Abandono de carrinho',
+                url: 'https://camilads13.github.io/abandono-de-carrinho-no-app-e-site/',
+                category: 'E-commerce',
+                description: 'Métricas de funil de conversão e identificação de comportamento na taxa de abandono do App e Site.',
+                icon: 'shopping-bag',
+                badgeBg: 'bg-indigo-50 text-indigo-700 border-indigo-200'
+            },
+            {
+                id: 'cupons',
+                title: 'Cupons de desconto',
+                url: 'https://camilads13.github.io/cupons-de-desconto/',
+                category: 'Promoções',
+                description: 'Análise do impacto financeiro, uso por usuário e performance de campanhas com cupons promocionais.',
+                icon: 'ticket',
+                badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+            },
+            {
+                id: 'datas-dobradas',
+                title: 'Datas dobradas',
+                url: 'https://camilads13.github.io/liquida-app/',
+                category: 'Promoções',
+                description: 'Resultados operacionais e volumetria em campanhas especiais tipo Liquida App e dias comemorativos.',
+                icon: 'calendar-range',
+                badgeBg: 'bg-purple-50 text-purple-700 border-purple-200'
+            },
+            {
+                id: 'frete-especial',
+                title: 'Frete especial',
+                url: 'https://camilads13.github.io/FRETE-ESPECIAL/',
+                category: 'Logística',
+                description: 'Monitoramento contínuo das ofertas de frete, taxa de conversão associada e orçamento de subsídio.',
+                icon: 'truck',
+                badgeBg: 'bg-sky-50 text-sky-700 border-sky-200'
+            },
+            {
+                id: 'campanhas-frete-2026',
+                title: 'Campanhas de Frete (VIP Commerce 2026)',
+                url: 'https://camilads13.github.io/Campanhas-de-frete-realizados-na-vipcommerce-em-2026/',
+                category: 'Logística',
+                description: 'Relatório e acompanhamento das campanhas e ações de frete realizadas na plataforma VIP Commerce em 2026.',
+                icon: 'container',
+                badgeBg: 'bg-cyan-50 text-cyan-700 border-cyan-200'
+            }
+        ];
 
-  <!-- MODAL QR -->
-  <div id="modal-qr" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs" style="display: none;">
-    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center relative" onclick="event.stopPropagation()">
-      <button onclick="closeQrModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 font-bold">✕</button>
-      <h3 class="text-base font-bold text-slate-900" id="qr-title">QR Code do Portal</h3>
-      <p class="text-xs text-slate-500 mt-0.5" id="qr-sub">Aponte a câmera do celular para abrir</p>
-      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 inline-block my-4 shadow-inner" id="qrcode-box"></div>
-      <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-left mb-4">
-        <span class="text-[10px] text-slate-400 uppercase font-bold block">URL</span>
-        <span class="text-xs font-mono text-blue-900 break-all" id="qr-url"></span>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="copyCurrentQr()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"><span id="qr-copy-btn">Copiar Link</span></button>
-        <a id="qr-open-btn" href="#" target="_blank" class="flex-1 py-2 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl text-center">Abrir Direto ↗</a>
-      </div>
-    </div>
-  </div>
+        // Favoritos salvos no LocalStorage
+        let favorites = JSON.parse(localStorage.getItem('analytics_favs') || '[]');
+        let currentFilter = 'all';
+        let searchQuery = '';
 
-  <!-- MODAL NOVO LINK -->
-  <div id="modal-add-link" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs" style="display: none;">
-    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100 relative" onclick="event.stopPropagation()">
-      <button onclick="closeAddLinkModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 font-bold">✕</button>
-      <h3 class="text-base font-bold text-slate-900 mb-1">Adicionar Novo Portal</h3>
-      <p class="text-xs text-slate-500 mb-4">Cadastre um atalho rápido no totem</p>
-      <form onsubmit="handleCreateLink(event)" class="space-y-3">
-        <div><label class="block text-xs font-bold text-slate-700 mb-1">Título</label><input type="text" id="nl-title" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs" placeholder="Ex: Portal de Ofertas" /></div>
-        <div><label class="block text-xs font-bold text-slate-700 mb-1">Descrição</label><input type="text" id="nl-desc" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs" placeholder="Ex: Acesso encarregados" /></div>
-        <div><label class="block text-xs font-bold text-slate-700 mb-1">URL</label><input type="url" id="nl-url" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs" placeholder="https://..." /></div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="block text-xs font-bold text-slate-700 mb-1">Categoria</label><select id="nl-cat" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"><option value="frete">Frete</option><option value="campanhas">Campanhas</option><option value="gestao">Gestão</option><option value="vendas">Vendas</option></select></div>
-          <div><label class="block text-xs font-bold text-slate-700 mb-1">Badge</label><input type="text" id="nl-badge" placeholder="Novo" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs" /></div>
-        </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeAddLinkModal()" class="px-4 py-2 text-xs font-bold text-slate-600">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-orange-500 text-white text-xs font-bold rounded-xl shadow-md">Salvar Portal</button>
-        </div>
-      </form>
-    </div>
-  </div>
+        const dashboardsGrid = document.getElementById('dashboardsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilters = document.getElementById('categoryFilters');
+        const emptyState = document.getElementById('emptyState');
 
-  <!-- MODAL SYNC CSV -->
-  <div id="modal-sync" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs" style="display: none;">
-    <div class="bg-white rounded-3xl p-6 max-w-xl w-full shadow-2xl border border-slate-100 relative" onclick="event.stopPropagation()">
-      <button onclick="closeSyncModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 font-bold">✕</button>
-      <h3 class="text-base font-bold text-slate-900 mb-1">Sincronizar Dados de Ruptura</h3>
-      <p class="text-xs text-slate-500 mb-3">Cole novos dados CSV para recalcular todas as métricas</p>
-      <div class="space-y-3">
-        <textarea id="sync-csv-text" rows="6" class="w-full p-3 font-mono text-[11px] bg-slate-50 border border-slate-200 rounded-xl outline-none" placeholder="DATA;LOJA;QTD COMPRA;TOTAL DE ITENS;ITENS EXCLUIDOS;ITENS EXCLUIDOS %"></textarea>
-        <div class="flex items-center justify-between pt-2">
-          <button onclick="restoreDefaultData()" class="text-xs font-bold text-slate-500 underline">Restaurar Padrão</button>
-          <div class="flex gap-2">
-            <button onclick="closeSyncModal()" class="px-4 py-2 text-xs font-bold text-slate-600">Cancelar</button>
-            <button onclick="applyCsvData()" class="px-5 py-2 bg-blue-900 text-white text-xs font-bold rounded-xl shadow-md">Processar CSV</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+        const dashboardModal = document.getElementById('dashboardModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalIframe = document.getElementById('modalIframe');
+        const iframeLoader = document.getElementById('iframeLoader');
+        const modalExternalLink = document.getElementById('modalExternalLink');
 
-  <!-- SCRIPT -->
-  <script>
-    let soundEnabled = true, audioCtx = null;
-    function playBeep() {
-      if (!soundEnabled) return;
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === "suspended") audioCtx.resume();
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.frequency.setValueAtTime(580, audioCtx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
-        g.gain.setValueAtTime(0.04, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-        o.connect(g); g.connect(audioCtx.destination);
-        o.start(); o.stop(audioCtx.currentTime + 0.08);
-      } catch(e) {}
-    }
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      const b = document.getElementById("snd-btn");
-      if (b) b.innerText = soundEnabled ? "🔊" : "🔇";
-      if (soundEnabled) playBeep();
-    }
+        function toggleFavorite(id, e) {
+            e.stopPropagation();
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(favId => favId !== id);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('analytics_favs', JSON.stringify(favorites));
+            renderDashboards();
+        }
 
-    function updateClock() {
-      const now = new Date();
-      document.getElementById("live-clock").innerText = now.toLocaleTimeString("pt-BR");
-      document.getElementById("live-date").innerText = now.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" });
-    }
-    setInterval(updateClock, 1000); updateClock();
+        function applyTiltEffect(card) {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -6;
+                const rotateY = ((x - centerX) / centerX) * 6;
 
-    const TIPS = [
-      "Bom dia! Que bom ver você na Rede Pinheiro, o bom vizinho!",
-      "Monitore de perto lojas com ruptura acima de 12%!",
-      "Campanhas de Frete e Liquida App estão a todo vapor!",
-      "Escaneie o QR Code dos portais direto pelo celular!",
-      "Clique em mim para comemorar nossas conquistas de hoje!"
-    ];
-    let tipIdx = 0;
-    function nextMascotTip() {
-      playBeep(); tipIdx = (tipIdx + 1) % TIPS.length;
-      document.getElementById("mascot-text").innerText = '"' + TIPS[tipIdx] + '"';
-    }
-    setInterval(nextMascotTip, 8000);
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+            });
 
-    function handleMascotClick() {
-      playBeep();
-      if (typeof confetti === "function") confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
-      nextMascotTip();
-      const b = document.getElementById("mascot-box");
-      if (b) { b.classList.add("scale-110"); setTimeout(() => b.classList.remove("scale-110"), 400); }
-    }
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            });
+        }
 
-    function switchTab(tab) {
-      playBeep();
-      const vp = document.getElementById("tab-portals-view");
-      const va = document.getElementById("tab-analytics-view");
-      const bt1 = document.getElementById("btn-tab-portals");
-      const bt2 = document.getElementById("btn-tab-analytics");
-      const bb1 = document.getElementById("banner-btn-portals");
-      const bb2 = document.getElementById("banner-btn-analytics");
+        function renderDashboards() {
+            dashboardsGrid.innerHTML = '';
 
-      if (tab === "portals") {
-        vp.style.display = "block"; va.style.display = "none";
-        bt1.className = "flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all t-act";
-        bt2.className = "flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all t-inact";
-        bb1.className = "px-4 py-2.5 rounded-xl font-bold text-xs border shadow-xs transition-all flex items-center gap-2 b-act";
-        bb2.className = "px-4 py-2.5 rounded-xl font-bold text-xs border shadow-xs transition-all flex items-center gap-2 b-inact";
-      } else {
-        vp.style.display = "none"; va.style.display = "block";
-        bt1.className = "flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all t-inact";
-        bt2.className = "flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all t-act";
-        bb1.className = "px-4 py-2.5 rounded-xl font-bold text-xs border shadow-xs transition-all flex items-center gap-2 b-inact";
-        bb2.className = "px-4 py-2.5 rounded-xl font-bold text-xs border shadow-xs transition-all flex items-center gap-2 b-act";
-        updateAnalytics();
-      }
-    }
+            const filtered = dashboardsData.filter(item => {
+                const isFav = favorites.includes(item.id);
+                const matchesCategory = currentFilter === 'all' 
+                    ? true 
+                    : currentFilter === 'fav' 
+                        ? isFav 
+                        : item.category === currentFilter;
 
-    const INITIAL_LINKS = [
-      { id: "rup", title: "Painel de Ruptura & Cancelamento", desc: "Taxas diárias, itens excluídos e monitoramento das 16 lojas em tempo real", url: "#analytics", cat: "gestao", badge: "Ruptura & Gestão", color: "from-blue-900 to-indigo-950" },
-      { id: "emb", title: "Vendas das Embarcações", desc: "Acompanhamento do faturamento, tickets e pedidos das embarcações", url: "https://camilads13.github.io/Vendas-das-Embarca-es/", cat: "vendas", badge: "Embarcações", color: "from-cyan-600 to-blue-700" },
-      { id: "liq", title: "Datas Dobradas • Liquida App", desc: "Campanhas de pontuação em dobro, ofertas relâmpago e liquidação no aplicativo", url: "https://camilads13.github.io/liquida-app/", cat: "campanhas", badge: "Liquida App", color: "from-violet-600 to-purple-800" },
-      { id: "cup", title: "Cupons de Desconto", desc: "Painel e gestão de cupons promocionais vigentes em todas as lojas da rede", url: "https://camilads13.github.io/cupons-de-desconto/", cat: "campanhas", badge: "Cupons Ativos", color: "from-emerald-600 to-teal-700" },
-      { id: "fre", title: "Frete Especial Vip", desc: "Regras e condições especiais de entrega para clientes fiéis e rotas prioritárias", url: "https://camilads13.github.io/FRETE-ESPECIAL/", cat: "frete", badge: "Condições Vip", color: "from-orange-500 to-red-600" }
-    ];
+                const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      item.category.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
 
-    let portalLinks = JSON.parse(localStorage.getItem("pin_links") || "null") || INITIAL_LINKS;
-    let currentCat = "all";
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                filtered.forEach(dash => {
+                    const isFav = favorites.includes(dash.id);
+                    const card = document.createElement('div');
+                    card.className = "interactive-card group relative rounded-2xl bg-white border border-slate-200/90 p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-blue-300 cursor-pointer";
 
-    function setCategory(cat) {
-      playBeep(); currentCat = cat;
-      document.querySelectorAll(".cat-pill").forEach(b => {
-        b.className = b.dataset.cat === cat ? "cat-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-900 text-white" : "cat-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
-      });
-      renderPortalCards();
-    }
+                    card.ondblclick = () => openPreviewModal(dash.id);
 
-    function renderPortalCards() {
-      const q = (document.getElementById("portal-search")?.value || "").toLowerCase();
-      const grid = document.getElementById("portals-grid");
-      const filtered = portalLinks.filter(l => (currentCat === "all" || l.cat === currentCat) && (l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q)));
-      
-      grid.innerHTML = filtered.map(l => {
-        const isInternal = l.url === "#analytics";
-        const click = isInternal ? "switchTab('analytics')" : "";
-        const href = isInternal ? "javascript:void(0)" : l.url;
-        const target = isInternal ? "" : "target='_blank'";
-        return '<div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between group hover:-translate-y-1">' +
-          '<div>' +
-            '<div class="flex items-center justify-between gap-2 mb-3">' +
-              '<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr ' + l.color + ' text-white flex items-center justify-center font-bold text-sm shadow-md">★</div>' +
-              '<span class="text-[10px] font-extrabold uppercase px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full border border-slate-200">' + l.badge + '</span>' +
-            '</div>' +
-            '<h3 class="text-sm font-extrabold text-slate-900 group-hover:text-blue-900 transition-colors">' + l.title + '</h3>' +
-            '<p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">' + l.desc + '</p>' +
-          '</div>' +
-          '<div class="flex items-center gap-2 pt-4 mt-4 border-t border-slate-100">' +
-            '<button onclick="openQrModal(\'' + l.id + '\')" class="p-2 text-slate-600 hover:text-orange-600 hover:bg-orange-50 rounded-xl border border-slate-200 text-xs font-bold">QR Code</button>' +
-            '<button onclick="copyUrl(\'' + l.url + '\')" class="p-2 text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">Copiar</button>' +
-            '<a href="' + href + '" ' + target + ' onclick="' + click + '; playBeep();" class="ml-auto px-4 py-1.5 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl shadow-xs">Acessar →</a>' +
-          '</div>' +
-        '</div>';
-      }).join("");
-    }
+                    card.innerHTML = `
+                        <div class="space-y-4">
+                            <!-- Top Info Header -->
+                            <div class="flex items-start justify-between">
+                                <div class="p-3 bg-slate-100 text-slate-700 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                                    <i data-lucide="${dash.icon}" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full border ${dash.badgeBg}">
+                                        ${dash.category}
+                                    </span>
+                                    <button onclick="toggleFavorite('${dash.id}', event)" class="p-1.5 text-slate-300 hover:text-amber-400 transition-colors" title="Favoritar">
+                                        <i data-lucide="star" class="w-4 h-4 favorite-star ${isFav ? 'active' : ''}"></i>
+                                    </button>
+                                </div>
+                            </div>
 
-    let activeQr = null;
-    function openQrModal(id) {
-      playBeep(); activeQr = portalLinks.find(x => x.id === id);
-      if (!activeQr) return;
-      const u = activeQr.url === "#analytics" ? window.location.href : activeQr.url;
-      document.getElementById("qr-title").innerText = activeQr.title;
-      document.getElementById("qr-sub").innerText = activeQr.desc;
-      document.getElementById("qr-url").innerText = u;
-      document.getElementById("qr-open-btn").href = u;
-      const box = document.getElementById("qrcode-box"); box.innerHTML = "";
-      new QRCode(box, { text: u, width: 160, height: 160, colorDark: "#1e3a8a", colorLight: "#ffffff" });
-      document.getElementById("modal-qr").style.display = "flex";
-    }
-    function closeQrModal() { document.getElementById("modal-qr").style.display = "none"; }
-    function copyCurrentQr() {
-      if (!activeQr) return;
-      const u = activeQr.url === "#analytics" ? window.location.href : activeQr.url;
-      navigator.clipboard.writeText(u); playBeep();
-      document.getElementById("qr-copy-btn").innerText = "Copiado!";
-      setTimeout(() => document.getElementById("qr-copy-btn").innerText = "Copiar Link", 2000);
-    }
-    function copyUrl(u) {
-      const real = u === "#analytics" ? window.location.href : u;
-      navigator.clipboard.writeText(real); playBeep();
-      alert("Link copiado com sucesso!");
-    }
+                            <!-- Content -->
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+                                    ${dash.title}
+                                </h3>
+                                <p class="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
+                                    ${dash.description}
+                                </p>
+                            </div>
+                        </div>
 
-    function openAddLinkModal() { playBeep(); document.getElementById("modal-add-link").style.display = "flex"; }
-    function closeAddLinkModal() { document.getElementById("modal-add-link").style.display = "none"; }
-    function handleCreateLink(e) {
-      e.preventDefault();
-      portalLinks.unshift({
-        id: "c-" + Date.now(),
-        title: document.getElementById("nl-title").value.trim(),
-        desc: document.getElementById("nl-desc").value.trim(),
-        url: document.getElementById("nl-url").value.trim(),
-        cat: document.getElementById("nl-cat").value,
-        badge: document.getElementById("nl-badge").value.trim() || "Portal",
-        color: "from-blue-600 to-indigo-700"
-      });
-      localStorage.setItem("pin_links", JSON.stringify(portalLinks));
-      renderPortalCards(); closeAddLinkModal(); playBeep();
-    }
+                        <!-- Action Buttons -->
+                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2">
+                            <button onclick="openPreviewModal('${dash.id}')" 
+                                class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center justify-center space-x-1.5">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                <span>Visualizar</span>
+                            </button>
+                            <a href="${dash.url}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+                                class="py-2 px-3 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-500/20 transition-all flex items-center justify-center space-x-1.5"
+                                title="Abrir em Nova Aba">
+                                <span>Acessar</span>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    `;
 
-    function openSyncModal() { playBeep(); document.getElementById("modal-sync").style.display = "flex"; }
-    function closeSyncModal() { document.getElementById("modal-sync").style.display = "none"; }
+                    applyTiltEffect(card);
+                    dashboardsGrid.appendChild(card);
+                });
+            }
 
-    const RAW_STORES = [["QUIXERAMOBIM",264,8049,1384,17.19,86.67,"26/08/2026"],["ACARAU",164,6456,1017,15.75,78.57,"13/08/2026"],["ANTONIO SALES",502,21151,2895,13.69,29.1,"19/08/2026"],["PORTO DAS DUNAS",183,5172,700,13.53,41.67,"08/09/2026"],["QUIXADA",477,13993,1744,12.46,37.21,"19/08/2026"],["AQUIRAZ",378,12971,1586,12.23,29.24,"24/08/2026"],["ITAPIPOCA",434,14237,1678,11.79,56.05,"13/08/2026"],["ARACATI",201,8260,832,10.07,30.61,"05/08/2026"],["MARANGUAPE",130,4028,365,9.06,33.33,"11/09/2026"],["WASHINGTON SOARES",310,12571,1084,8.62,25.62,"02/08/2026"],["SOBRAL",455,17223,1361,7.9,19.35,"04/08/2026"],["PREA",206,7373,574,7.79,23.08,"03/08/2026"],["LIMOEIRO",108,3292,249,7.56,23.64,"31/08/2026"],["CAMBEBA",56,1239,82,6.62,28.21,"13/08/2026"],["MONDUBIM",454,16241,891,5.49,16.22,"08/09/2026"],["TIANGUA",75,2041,19,0.93,25,"10/09/2026"]];
-    const RAW_DAILY = [["01/08/2026",11.84],["02/08/2026",12.56],["03/08/2026",12.6],["04/08/2026",13.36],["05/08/2026",10.99],["06/08/2026",8.97],["07/08/2026",9.92],["08/08/2026",9.89],["09/08/2026",10.61],["10/08/2026",11.88],["11/08/2026",12.8],["12/08/2026",13.57],["13/08/2026",14.98],["14/08/2026",9.83],["15/08/2026",14.02],["16/08/2026",8.82],["17/08/2026",11.35],["18/08/2026",13.26],["19/08/2026",14.29],["20/08/2026",10.82],["21/08/2026",10.09],["22/08/2026",9.18],["23/08/2026",10.97],["24/08/2026",12.98],["25/08/2026",10.11],["26/08/2026",32.11],["27/08/2026",13.01],["28/08/2026",5.83],["29/08/2026",9.61],["30/08/2026",13.44],["31/08/2026",12.14],["01/09/2026",10.04],["02/09/2026",12.78],["03/09/2026",7.66],["04/09/2026",7.14],["05/09/2026",10.07],["06/09/2026",12.53],["07/09/2026",11.15],["08/09/2026",15.21],["09/09/2026",4.53],["10/09/2026",9.21],["11/09/2026",8.68],["12/09/2026",7.07],["13/09/2026",11.15],["14/09/2026",9.07]];
-    const RAW_ANOM = [{"loja":"QUIXERAMOBIM","data":"26/08/2026","itens":705,"excl":611,"pct":86.7},{"loja":"ITAPIPOCA","data":"13/08/2026","itens":157,"excl":88,"pct":56},{"loja":"QUIXERAMOBIM","data":"07/09/2026","itens":185,"excl":90,"pct":48.6},{"loja":"ACARAU","data":"14/09/2026","itens":50,"excl":22,"pct":44},{"loja":"PORTO DAS DUNAS","data":"08/09/2026","itens":72,"excl":30,"pct":41.7},{"loja":"QUIXADA","data":"19/08/2026","itens":43,"excl":16,"pct":37.2}];
+            lucide.createIcons();
+        }
 
-    const DEF_STORES = RAW_STORES.map(s => ({ loja: s[0], compras: s[1], itens: s[2], excl: s[3], taxaMedia: s[4], piorTaxa: s[5], piorData: s[6] }));
-    const DEF_DAILY = RAW_DAILY.map(d => ({ data: d[0], taxa: d[1] }));
-    const DEF_ANOMALIES = RAW_ANOM;
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            renderDashboards();
+        });
 
-    let storeList = JSON.parse(localStorage.getItem("pin_stores") || "null") || DEF_STORES;
-    let dailyList = JSON.parse(localStorage.getItem("pin_daily") || "null") || DEF_DAILY;
-    let anomalyList = JSON.parse(localStorage.getItem("pin_anomalies") || "null") || DEF_ANOMALIES;
+        categoryFilters.addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
 
-    function initAnalytics() {
-      const sel = document.getElementById("store-select");
-      sel.innerHTML = '<option value="ALL">Todas as 16 Lojas (Rede Pinheiro)</option>' + storeList.map(s => '<option value="' + s.loja + '">' + s.loja + '</option>').join("");
-      updateAnalytics();
-    }
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-sm', 'shadow-blue-500/20');
+                b.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+            });
 
-    function updateAnalytics() {
-      const cur = document.getElementById("store-select")?.value || "ALL";
-      let c = 0, i = 0, e = 0;
-      if (cur === "ALL") {
-        storeList.forEach(s => { c += s.compras; i += s.itens; e += s.excl; });
-      } else {
-        const s = storeList.find(x => x.loja === cur);
-        if (s) { c = s.compras; i = s.itens; e = s.excl; }
-      }
-      const taxa = i > 0 ? (e / i) * 100 : 0;
-      document.getElementById("kpi-compras").innerText = c.toLocaleString("pt-BR");
-      document.getElementById("kpi-itens").innerText = i.toLocaleString("pt-BR");
-      document.getElementById("kpi-excluidos").innerText = e.toLocaleString("pt-BR");
-      const tx = document.getElementById("kpi-taxa");
-      tx.innerText = taxa.toFixed(2) + "%";
-      tx.className = "text-2xl sm:text-3xl font-black mt-2 " + (taxa > 15 ? "text-red-600" : taxa > 10 ? "text-orange-600" : "text-emerald-600");
+            btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-sm', 'shadow-blue-500/20');
+            btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200');
 
-      if (storeList.length > 0) document.getElementById("worst-badge").innerText = "Pior: " + storeList[0].loja + " (" + storeList[0].taxaMedia + "%)";
+            currentFilter = btn.dataset.category;
+            renderDashboards();
+        });
 
-      renderTable(); renderAnomalies(); renderTrendChart(); renderBarChart(cur);
-    }
+        window.openPreviewModal = function(dashId) {
+            const dash = dashboardsData.find(d => d.id === dashId);
+            if (!dash) return;
 
-    function renderTrendChart() {
-      const box = document.getElementById("trend-chart");
-      const max = Math.max(...dailyList.map(d => d.taxa), 20);
-      const w = 520, h = 220, pad = { t: 20, r: 30, b: 40, l: 40 };
-      const cw = w - pad.l - pad.r, ch = h - pad.t - pad.b;
+            modalTitle.textContent = dash.title;
+            modalCategory.textContent = dash.category;
+            modalExternalLink.href = dash.url;
+            modalIcon.setAttribute('data-lucide', dash.icon);
+            
+            iframeLoader.classList.remove('hidden');
 
-      const pts = dailyList.map((d, idx) => ({
-        ...d,
-        x: pad.l + (idx / (dailyList.length - 1 || 1)) * cw,
-        y: pad.t + ch - (d.taxa / max) * ch
-      }));
+            modalIframe.src = dash.url;
+            modalIframe.onload = () => {
+                iframeLoader.classList.add('hidden');
+            };
 
-      const path = pts.reduce((a, p, idx) => idx === 0 ? 'M ' + p.x + ' ' + p.y : a + ' L ' + p.x + ' ' + p.y, '');
-      const area = path + ' L ' + pts[pts.length-1].x + ' ' + (pad.t + ch) + ' L ' + pts[0].x + ' ' + (pad.t + ch) + ' Z';
+            dashboardModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        };
 
-      box.innerHTML = '<svg viewBox="0 0 ' + w + ' ' + h + '" class="w-full h-full">' +
-        '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f97316" stop-opacity="0.3"/><stop offset="100%" stop-color="#f97316" stop-opacity="0"/></linearGradient></defs>' +
-        '<line x1="' + pad.l + '" y1="' + (pad.t+ch) + '" x2="' + (pad.l+cw) + '" y2="' + (pad.t+ch) + '" stroke="#e2e8f0"/>' +
-        '<line x1="' + pad.l + '" y1="' + (pad.t+ch/2) + '" x2="' + (pad.l+cw) + '" y2="' + (pad.t+ch/2) + '" stroke="#e2e8f0" stroke-dasharray="3,3"/>' +
-        '<text x="' + (pad.l-6) + '" y="' + (pad.t+ch+4) + '" font-size="10" fill="#94a3b8" text-anchor="end">0%</text>' +
-        '<text x="' + (pad.l-6) + '" y="' + (pad.t+ch/2+4) + '" font-size="10" fill="#94a3b8" text-anchor="end">' + Math.round(max/2) + '%</text>' +
-        '<text x="' + (pad.l-6) + '" y="' + (pad.t+4) + '" font-size="10" fill="#94a3b8" text-anchor="end">' + Math.round(max) + '%</text>' +
-        '<path d="' + area + '" fill="url(#g)"/>' +
-        '<path d="' + path + '" fill="none" stroke="#f97316" stroke-width="2.5"/>' +
-        pts.map((p, idx) => 
-          '<circle cx="' + p.x + '" cy="' + p.y + '" r="3.5" fill="#fff" stroke="#f97316" stroke-width="2"><title>' + p.data + ': ' + p.taxa + '%</title></circle>' +
-          ((idx === 0 || idx === Math.floor(pts.length/2) || idx === pts.length-1) ? '<text x="' + p.x + '" y="' + (pad.t+ch+18) + '" font-size="10" fill="#64748b" text-anchor="middle">' + p.data.slice(0,5) + '</text>' : '')
-        ).join('') +
-      '</svg>';
-    }
+        function closeModal() {
+            dashboardModal.classList.add('hidden');
+            modalIframe.src = '';
+            document.body.style.overflow = '';
+        }
 
-    function renderBarChart(cur) {
-      const box = document.getElementById("bar-chart");
-      const list = cur === "ALL" ? storeList : storeList.filter(s => s.loja === cur);
-      box.innerHTML = list.map(s => {
-        const col = s.taxaMedia > 20 ? "bg-red-500 text-red-700" : s.taxaMedia > 12 ? "bg-orange-500 text-orange-700" : s.taxaMedia > 7 ? "bg-amber-500 text-amber-700" : "bg-emerald-500 text-emerald-700";
-        const w = Math.min(Math.max((s.taxaMedia / 30) * 100, 5), 100);
-        return '<div class="mb-2.5">' +
-          '<div class="flex justify-between text-[11px] font-bold mb-1">' +
-            '<span class="text-slate-800 truncate">' + s.loja + '</span>' +
-            '<span class="' + col.split(" ")[1] + '">' + s.taxaMedia.toFixed(2) + '%</span>' +
-          '</div>' +
-          '<div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">' +
-            '<div class="' + col.split(" ")[0] + ' h-2 rounded-full" style="width:' + w + '%"></div>' +
-          '</div>' +
-        '</div>';
-      }).join('');
-    }
+        closeModalBtn.addEventListener('click', closeModal);
 
-    function renderTable() {
-      const q = (document.getElementById("table-filter")?.value || "").toLowerCase();
-      const tb = document.getElementById("store-tbody");
-      const filtered = storeList.filter(s => s.loja.toLowerCase().includes(q));
-      tb.innerHTML = filtered.map(s => {
-        const st = s.taxaMedia > 20 ? "bg-red-100 text-red-800 border-red-300:Crítico" : s.taxaMedia > 12 ? "bg-orange-100 text-orange-800 border-orange-300:Alerta" : s.taxaMedia > 7 ? "bg-amber-100 text-amber-800 border-amber-300:Regular" : "bg-emerald-100 text-emerald-800 border-emerald-300:Ótimo";
-        const [cls, txt] = st.split(":");
-        return '<tr class="hover:bg-slate-50">' +
-          '<td class="py-3 px-4 font-bold text-slate-800">' + s.loja + '</td>' +
-          '<td class="py-3 px-4">' + s.compras.toLocaleString("pt-BR") + '</td>' +
-          '<td class="py-3 px-4">' + s.itens.toLocaleString("pt-BR") + '</td>' +
-          '<td class="py-3 px-4 text-orange-600 font-bold">' + s.excl.toLocaleString("pt-BR") + '</td>' +
-          '<td class="py-3 px-4 font-black ' + (s.taxaMedia > 15 ? "text-red-600" : "text-slate-800") + '">' + s.taxaMedia.toFixed(2) + '%</td>' +
-          '<td class="py-3 px-4 text-slate-500">' + (s.piorTaxa > 0 ? s.piorTaxa.toFixed(1) + "% em " + s.piorData : "-") + '</td>' +
-          '<td class="py-3 px-4"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ' + cls + '">' + txt + '</span></td>' +
-        '</tr>';
-      }).join('');
-    }
+        dashboardModal.addEventListener('click', (e) => {
+            if (e.target === dashboardModal) closeModal();
+        });
 
-    function renderAnomalies() {
-      document.getElementById("anomalies-grid").innerHTML = anomalyList.map(a => 
-        '<div class="p-3 bg-red-50 border border-red-200 rounded-2xl">' +
-          '<div class="flex justify-between items-center"><span class="font-bold text-xs text-red-900">' + a.loja + '</span><span class="text-[10px] font-mono bg-red-200 text-red-900 px-1.5 py-0.5 rounded font-bold">' + a.data + '</span></div>' +
-          '<div class="flex items-baseline gap-1 mt-1"><span class="text-xl font-black text-red-700">' + a.pct + '%</span><span class="text-[11px] text-red-600">(' + a.excl + ' de ' + a.itens + ' itens)</span></div>' +
-        '</div>'
-      ).join('');
-    }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !dashboardModal.classList.contains('hidden')) closeModal();
+        });
 
-    function applyCsvData() {
-      const t = document.getElementById("sync-csv-text").value.trim();
-      if (!t) return;
-      const lines = t.split('\n').filter(l => l.trim().length > 0);
-      const sMap = {}, dMap = {}, anom = [];
-      lines.forEach(l => {
-        const c = l.split(/[,;]/).map(x => x.trim());
-        if (c.length < 2 || c[0].toUpperCase().includes("DATA")) return;
-        const [d, loja, cp, it, ex, p] = c;
-        const compras = parseFloat(cp) || 0, itens = parseFloat(it) || 0, excl = parseFloat(ex) || 0;
-        let pct = parseFloat(p) || (itens > 0 ? (excl/itens)*100 : 0);
-        if (!sMap[loja]) sMap[loja] = { loja, compras: 0, itens: 0, excl: 0, piorTaxa: 0, piorData: "" };
-        sMap[loja].compras += compras; sMap[loja].itens += itens; sMap[loja].excl += excl;
-        if (pct > sMap[loja].piorTaxa) { sMap[loja].piorTaxa = pct; sMap[loja].piorData = d; }
-        if (!dMap[d]) dMap[d] = { data: d, itens: 0, excl: 0 };
-        dMap[d].itens += itens; dMap[d].excl += excl;
-        if (itens >= 15 && pct >= 20) anom.push({ loja, data: d, itens: Math.round(itens), excl: Math.round(excl), pct: Number(pct.toFixed(1)) });
-      });
-
-      storeList = Object.values(sMap).map(s => ({ ...s, taxaMedia: Number(((s.excl/s.itens)*100).toFixed(2)) })).sort((a,b) => b.taxaMedia - a.taxaMedia);
-      dailyList = Object.values(dMap).map(d => ({ data: d.data, taxa: Number(((d.excl/d.itens)*100).toFixed(2)) }));
-      anomalyList = anom.sort((a,b) => b.pct - a.pct).slice(0, 6);
-
-      localStorage.setItem("pin_stores", JSON.stringify(storeList));
-      localStorage.setItem("pin_daily", JSON.stringify(dailyList));
-      localStorage.setItem("pin_anomalies", JSON.stringify(anomalyList));
-      initAnalytics(); closeSyncModal(); playBeep();
-    }
-
-    function restoreDefaultData() {
-      localStorage.removeItem("pin_stores"); localStorage.removeItem("pin_daily"); localStorage.removeItem("pin_anomalies");
-      storeList = DEF_STORES; dailyList = DEF_DAILY; anomalyList = DEF_ANOMALIES;
-      initAnalytics(); closeSyncModal(); playBeep();
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      renderPortalCards(); initAnalytics();
-    });
-  </script>
+        window.onload = function() {
+            renderDashboards();
+        };
+    </script>
 </body>
 </html>
