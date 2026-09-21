@@ -3,435 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Análise de Dados</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Qual vamos analisar hoje?</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Vanilla Tilt para Efeito 3D Interativo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Interactive 3D Card Hover Effect */
-        .interactive-card {
-            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s ease, border-color 0.2s ease;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        .favorite-star {
-            transition: all 0.2s ease;
-        }
-        .favorite-star.active {
-            color: #eab308;
-            fill: #eab308;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .card-tilt { transform-style: preserve-3d; transform: perspective(1000px); }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col antialiased py-8 sm:py-12">
+<body class="bg-slate-100 text-slate-800 min-h-screen p-4 md:p-8">
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 flex-1 w-full">
+    <div class="max-w-7xl mx-auto space-y-8">
+        
+        <!-- Título Principal -->
+        <div class="text-center md:text-left space-y-2">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Qual vamos analisar hoje?</h1>
+            <p class="text-slate-500 text-sm md:text-base">Selecione um painel de dados para visualizar o relatório interativo completo.</p>
+        </div>
 
-        <!-- Hero Section -->
-        <section class="space-y-2">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Qual vamos analisar hoje?
-            </h1>
-            <p class="text-slate-500 text-sm sm:text-base">
-                Selecione um relatório para visualizar diretamente ou clique em acessar para abrir em nova aba.
-            </p>
-        </section>
-
-        <!-- Controls Section: Search & Category Filters -->
-        <section class="space-y-4">
-            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-                
-                <!-- Search Input -->
-                <div class="relative flex-1 max-w-md">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <i data-lucide="search" class="w-4 h-4"></i>
-                    </div>
-                    <input type="text" id="searchInput" placeholder="Pesquisar análise ou dashboard..." 
-                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
-                </div>
-
-                <!-- Category Filters -->
-                <div class="flex items-center gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none" id="categoryFilters">
-                    <button data-category="all" class="filter-btn active px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-blue-600 text-white shadow-sm shadow-blue-500/20">
-                        Todos
-                    </button>
-                    <button data-category="fav" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-white border border-slate-200 text-amber-600 hover:bg-amber-50 hover:border-amber-200 flex items-center gap-1">
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
-                        Favoritos
-                    </button>
-                    <button data-category="E-commerce" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        E-commerce
-                    </button>
-                    <button data-category="Vendas" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        Vendas
-                    </button>
-                    <button data-category="Promoções" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        Promoções
-                    </button>
-                    <button data-category="Logística" class="filter-btn px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        Logística
-                    </button>
-                </div>
+        <!-- Filtros Rápidos -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0" id="category-filters">
+                <button onclick="filterCategory('all')" class="cat-btn active bg-indigo-600 text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Todos</button>
+                <button onclick="filterCategory('fav')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">⭐ Favoritos</button>
+                <button onclick="filterCategory('E-commerce')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">E-commerce</button>
+                <button onclick="filterCategory('Vendas')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Vendas</button>
+                <button onclick="filterCategory('Promoções')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Promoções</button>
+                <button onclick="filterCategory('Logística')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Logística</button>
             </div>
-        </section>
-
-        <!-- Dashboards Grid -->
-        <section>
-            <div id="dashboardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Cards dynamically rendered via JS -->
+            <div class="relative w-full sm:w-72">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Pesquisar relatório..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all">
             </div>
+        </div>
 
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden text-center py-16 space-y-3">
-                <div class="p-4 bg-slate-200/60 rounded-full w-fit mx-auto text-slate-400">
-                    <i data-lucide="search-x" class="w-7 h-7"></i>
-                </div>
-                <h3 class="text-base font-semibold text-slate-800">Nenhuma análise encontrada</h3>
-                <p class="text-sm text-slate-500 max-w-sm mx-auto">Tente ajustar a busca ou selecione outra categoria.</p>
-            </div>
-        </section>
+        <!-- Grid de Cards de Relatórios -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="dashboards-grid">
+            <!-- Cards gerados via JS -->
+        </div>
 
-    </main>
+    </div>
 
-    <!-- Modal Viewer -->
-    <div id="dashboardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm transition-opacity">
-        <div class="bg-white w-full max-w-6xl h-[90vh] rounded-2xl shadow-2xl flex flex-col border border-slate-200 overflow-hidden">
-            
-            <!-- Modal Header -->
-            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
-                <div class="flex items-center space-x-3">
-                    <div id="modalIconContainer" class="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                        <i id="modalIcon" data-lucide="external-link" class="w-5 h-5"></i>
-                    </div>
+    <!-- Modal Iframe para Visualização Direta -->
+    <div id="reportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-white">
+                <div class="flex items-center gap-3">
+                    <div id="modalIcon" class="p-2 bg-indigo-50 rounded-xl text-indigo-600"></div>
                     <div>
-                        <h3 id="modalTitle" class="text-base font-bold text-slate-900">Título da Análise</h3>
-                        <p id="modalCategory" class="text-xs text-slate-500">Categoria</p>
+                        <h3 id="modalTitle" class="font-bold text-slate-900 text-base"></h3>
+                        <p id="modalCategory" class="text-xs text-slate-400"></p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <a id="modalExternalLink" href="#" target="_blank" rel="noopener noreferrer" 
-                        class="px-3 py-1.5 text-xs font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors flex items-center space-x-1.5" title="Abrir em nova aba">
-                        <span>Abrir na Web</span>
-                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                <div class="flex items-center gap-2">
+                    <a id="modalExternalLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl transition-all">
+                        Abrir na Web <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                     </a>
-                    <button id="closeModalBtn" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg transition-colors">
+                    <button onclick="closeModal()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
-
-            <!-- Modal Iframe Body -->
-            <div class="flex-1 relative bg-slate-100">
-                <div id="iframeLoader" class="absolute inset-0 flex flex-col items-center justify-center space-y-3 bg-white/80 backdrop-blur-sm z-10">
-                    <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-xs font-medium text-slate-500">Carregando painel...</p>
-                </div>
-                <iframe id="modalIframe" class="w-full h-full border-none" title="Dashboard Preview"></iframe>
+            <div class="flex-1 bg-slate-50 relative">
+                <iframe id="modalIframe" class="w-full h-full border-0" src=""></iframe>
             </div>
-
         </div>
     </div>
 
     <script>
         const dashboardsData = [
             {
-                id: 'ruptura',
-                title: 'Ruptura da loja online',
-                url: 'https://camilads13.github.io/RUPTURAS-DE-COMPRAS-VIP-COMMERCE/',
-                category: 'E-commerce',
-                description: 'Análise detalhada de indisponibilidade de itens e ruptura de estoque na loja online (Vip Commerce).',
-                icon: 'package-x',
-                badgeBg: 'bg-rose-50 text-rose-700 border-rose-200'
+                id: "ruptura",
+                title: "Ruptura da loja online",
+                category: "E-commerce",
+                icon: "alert-triangle",
+                url: "https://camilads13.github.io/RUPTURAS-DE-COMPRAS-VIP-COMMERCE/",
+                desc: "Análise de indisponibilidade e falhas de estoque em itens."
             },
             {
-                id: 'embarcacoes',
-                title: 'Venda das embarcações',
-                url: 'https://camilads13.github.io/Vendas-das-Embarca-es/',
-                category: 'Vendas',
-                description: 'Acompanhamento comercial de desempenho, métricas de faturamento e vendas marítimas/embarcações.',
-                icon: 'anchor',
-                badgeBg: 'bg-amber-50 text-amber-700 border-amber-200'
+                id: "embarcacoes",
+                title: "Venda das embarcações",
+                category: "Vendas",
+                icon: "ship",
+                url: "https://camilads13.github.io/Vendas-das-Embarca-es/",
+                desc: "Acompanhamento detalhado do desempenho de vendas marítimas."
             },
             {
-                id: 'abandono',
-                title: 'Abandono de carrinho',
-                url: 'https://camilads13.github.io/abandono-de-carrinho-no-app-e-site/',
-                category: 'E-commerce',
-                description: 'Métricas de funil de conversão e identificação de comportamento na taxa de abandono do App e Site.',
-                icon: 'shopping-bag',
-                badgeBg: 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                id: "carrinho",
+                title: "Abandono de carrinho",
+                category: "E-commerce",
+                icon: "shopping-cart",
+                url: "https://camilads13.github.io/abandono-de-carrinho-no-app-e-site/",
+                desc: "Métricas de carrinhos não finalizados no app e site."
             },
             {
-                id: 'cupons',
-                title: 'Cupons de desconto',
-                url: 'https://camilads13.github.io/cupons-de-desconto/',
-                category: 'Promoções',
-                description: 'Análise do impacto financeiro, uso por usuário e performance de campanhas com cupons promocionais.',
-                icon: 'ticket',
-                badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                id: "cupons",
+                title: "Cupons de desconto",
+                category: "Promoções",
+                icon: "ticket",
+                url: "https://camilads13.github.io/cupons-de-desconto/",
+                desc: "Relatório de adesão, impacto e conversão dos cupons."
             },
             {
-                id: 'datas-dobradas',
-                title: 'Datas dobradas',
-                url: 'https://camilads13.github.io/liquida-app/',
-                category: 'Promoções',
-                description: 'Resultados operacionais e volumetria em campanhas especiais tipo Liquida App e dias comemorativos.',
-                icon: 'calendar-range',
-                badgeBg: 'bg-purple-50 text-purple-700 border-purple-200'
+                id: "dobradas",
+                title: "Datas dobradas",
+                category: "Promoções",
+                icon: "calendar",
+                url: "https://camilads13.github.io/liquida-app/",
+                desc: "Resultados e pico de vendas em campanhas do tipo 5.5, 6.6, etc."
             },
             {
-                id: 'frete-especial',
-                title: 'Frete especial',
-                url: 'https://camilads13.github.io/FRETE-ESPECIAL/',
-                category: 'Logística',
-                description: 'Monitoramento contínuo das ofertas de frete, taxa de conversão associada e orçamento de subsídio.',
-                icon: 'truck',
-                badgeBg: 'bg-sky-50 text-sky-700 border-sky-200'
+                id: "frete-especial",
+                title: "Frete especial",
+                category: "Logística",
+                icon: "truck",
+                url: "https://camilads13.github.io/FRETE-ESPECIAL/",
+                desc: "Desempenho de campanhas com condições diferenciadas de frete."
             },
             {
-                id: 'campanhas-frete-2026',
-                title: 'Campanhas de Frete (VIP Commerce 2026)',
-                url: 'https://camilads13.github.io/Campanhas-de-frete-realizados-na-vipcommerce-em-2026/',
-                category: 'Logística',
-                description: 'Relatório e acompanhamento das campanhas e ações de frete realizadas na plataforma VIP Commerce em 2026.',
-                icon: 'container',
-                badgeBg: 'bg-cyan-50 text-cyan-700 border-cyan-200'
+                id: "frete-campanhas-2026",
+                title: "Campanhas de Frete VIP Commerce (2026)",
+                category: "Logística",
+                icon: "package-check",
+                url: "https://camilads13.github.io/Campanhas-de-frete-realizados-na-vipcommerce-em-2026/",
+                desc: "Consolidado de todas as ações de frete realizadas em 2026."
             }
         ];
 
-        // Favoritos salvos no LocalStorage
-        let favorites = JSON.parse(localStorage.getItem('analytics_favs') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('portal_favs') || '[]');
         let currentFilter = 'all';
-        let searchQuery = '';
 
-        const dashboardsGrid = document.getElementById('dashboardsGrid');
-        const searchInput = document.getElementById('searchInput');
-        const categoryFilters = document.getElementById('categoryFilters');
-        const emptyState = document.getElementById('emptyState');
+        function renderCards(items) {
+            const container = document.getElementById('dashboards-grid');
+            container.innerHTML = '';
 
-        const dashboardModal = document.getElementById('dashboardModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalCategory = document.getElementById('modalCategory');
-        const modalIcon = document.getElementById('modalIcon');
-        const modalIframe = document.getElementById('modalIframe');
-        const iframeLoader = document.getElementById('iframeLoader');
-        const modalExternalLink = document.getElementById('modalExternalLink');
+            items.forEach(item => {
+                const isFav = favorites.includes(item.id);
+                const card = document.createElement('div');
+                card.className = "card-tilt bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer relative";
+                card.setAttribute('ondblclick', `openModal('${item.id}')`);
 
-        function toggleFavorite(id, e) {
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-4">
+                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                                <i data-lucide="${item.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleFav(event, '${item.id}')" class="p-1.5 rounded-lg text-slate-300 hover:text-amber-400 transition-colors">
+                                    <i data-lucide="star" class="w-5 h-5 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
+                                </button>
+                                <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">${item.category}</span>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors">${item.title}</h3>
+                        <p class="text-slate-500 text-xs mt-1.5 line-clamp-2">${item.desc}</p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button onclick="openModal('${item.id}')" class="flex-1 bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 font-semibold text-xs py-2.5 rounded-xl border border-slate-200 hover:border-indigo-200 transition-all flex items-center justify-center gap-1.5">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Visualizar Relatório
+                        </button>
+                        <a href="${item.url}" target="_blank" class="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition-all" title="Abrir em nova aba">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+            VanillaTilt.init(document.querySelectorAll(".card-tilt"), { max: 8, speed: 400, "max-glare": 0.1 });
+        }
+
+        function toggleFav(e, id) {
             e.stopPropagation();
             if (favorites.includes(id)) {
-                favorites = favorites.filter(favId => favId !== id);
+                favorites = favorites.filter(f => f !== id);
             } else {
                 favorites.push(id);
             }
-            localStorage.setItem('analytics_favs', JSON.stringify(favorites));
-            renderDashboards();
+            localStorage.setItem('portal_favs', JSON.stringify(favorites));
+            applyFilters();
         }
 
-        function applyTiltEffect(card) {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -6;
-                const rotateY = ((x - centerX) / centerX) * 6;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+        function filterCategory(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'active');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
             });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
-            });
+            event.target.classList.add('bg-indigo-600', 'text-white', 'active');
+            event.target.classList.remove('bg-slate-100', 'text-slate-600');
+            applyFilters();
         }
 
-        function renderDashboards() {
-            dashboardsGrid.innerHTML = '';
+        function handleSearch() {
+            applyFilters();
+        }
 
-            const filtered = dashboardsData.filter(item => {
-                const isFav = favorites.includes(item.id);
-                const matchesCategory = currentFilter === 'all' 
-                    ? true 
-                    : currentFilter === 'fav' 
-                        ? isFav 
-                        : item.category === currentFilter;
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = dashboardsData;
 
-                const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                      item.category.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchesCategory && matchesSearch;
-            });
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-                filtered.forEach(dash => {
-                    const isFav = favorites.includes(dash.id);
-                    const card = document.createElement('div');
-                    card.className = "interactive-card group relative rounded-2xl bg-white border border-slate-200/90 p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-blue-300 cursor-pointer";
-
-                    card.ondblclick = () => openPreviewModal(dash.id);
-
-                    card.innerHTML = `
-                        <div class="space-y-4">
-                            <!-- Top Info Header -->
-                            <div class="flex items-start justify-between">
-                                <div class="p-3 bg-slate-100 text-slate-700 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                                    <i data-lucide="${dash.icon}" class="w-6 h-6"></i>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full border ${dash.badgeBg}">
-                                        ${dash.category}
-                                    </span>
-                                    <button onclick="toggleFavorite('${dash.id}', event)" class="p-1.5 text-slate-300 hover:text-amber-400 transition-colors" title="Favoritar">
-                                        <i data-lucide="star" class="w-4 h-4 favorite-star ${isFav ? 'active' : ''}"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Content -->
-                            <div>
-                                <h3 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors flex items-center justify-between">
-                                    ${dash.title}
-                                </h3>
-                                <p class="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
-                                    ${dash.description}
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2">
-                            <button onclick="openPreviewModal('${dash.id}')" 
-                                class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center justify-center space-x-1.5">
-                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                <span>Visualizar</span>
-                            </button>
-                            <a href="${dash.url}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
-                                class="py-2 px-3 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-500/20 transition-all flex items-center justify-center space-x-1.5"
-                                title="Abrir em Nova Aba">
-                                <span>Acessar</span>
-                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-                    `;
-
-                    applyTiltEffect(card);
-                    dashboardsGrid.appendChild(card);
-                });
+            if (currentFilter === 'fav') {
+                filtered = filtered.filter(d => favorites.includes(d.id));
+            } else if (currentFilter !== 'all') {
+                filtered = filtered.filter(d => d.category === currentFilter);
             }
 
-            lucide.createIcons();
+            if (query) {
+                filtered = filtered.filter(d => d.title.toLowerCase().includes(query) || d.desc.toLowerCase().includes(query));
+            }
+
+            renderCards(filtered);
         }
 
-        searchInput.addEventListener('input', (e) => {
-            searchQuery = e.target.value.trim();
-            renderDashboards();
-        });
+        function openModal(id) {
+            const item = dashboardsData.find(d => d.id === id);
+            if (!item) return;
 
-        categoryFilters.addEventListener('click', (e) => {
-            const btn = e.target.closest('.filter-btn');
-            if (!btn) return;
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalCategory').innerText = item.category;
+            document.getElementById('modalIcon').innerHTML = `<i data-lucide="${item.icon}" class="w-5 h-5"></i>`;
+            document.getElementById('modalExternalLink').href = item.url;
 
-            document.querySelectorAll('.filter-btn').forEach(b => {
-                b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-sm', 'shadow-blue-500/20');
-                b.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
-            });
+            // ADICIONA TIMESTAMP PARA EVITAR PROBLEMAS DE CACHE NO IFRAME
+            const cacheBustUrl = item.url + (item.url.includes('?') ? '&' : '?') + 'v=' + Date.now();
+            document.getElementById('modalIframe').src = cacheBustUrl;
 
-            btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-sm', 'shadow-blue-500/20');
-            btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200');
-
-            currentFilter = btn.dataset.category;
-            renderDashboards();
-        });
-
-        window.openPreviewModal = function(dashId) {
-            const dash = dashboardsData.find(d => d.id === dashId);
-            if (!dash) return;
-
-            modalTitle.textContent = dash.title;
-            modalCategory.textContent = dash.category;
-            modalExternalLink.href = dash.url;
-            modalIcon.setAttribute('data-lucide', dash.icon);
-            
-            iframeLoader.classList.remove('hidden');
-
-            modalIframe.src = dash.url;
-            modalIframe.onload = () => {
-                iframeLoader.classList.add('hidden');
-            };
-
-            dashboardModal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            document.getElementById('reportModal').classList.remove('hidden');
             lucide.createIcons();
-        };
+        }
 
         function closeModal() {
-            dashboardModal.classList.add('hidden');
-            modalIframe.src = '';
-            document.body.style.overflow = '';
+            document.getElementById('reportModal').classList.add('hidden');
+            document.getElementById('modalIframe').src = '';
         }
 
-        closeModalBtn.addEventListener('click', closeModal);
-
-        dashboardModal.addEventListener('click', (e) => {
-            if (e.target === dashboardModal) closeModal();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !dashboardModal.classList.contains('hidden')) closeModal();
-        });
-
         window.onload = function() {
-            renderDashboards();
+            renderCards(dashboardsData);
         };
     </script>
 </body>
