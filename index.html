@@ -31,6 +31,7 @@
             <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0" id="category-filters">
                 <button onclick="filterCategory('all')" class="cat-btn active bg-indigo-600 text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Todos</button>
                 <button onclick="filterCategory('fav')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">⭐ Favoritos</button>
+                <button onclick="filterCategory('Financeiro')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Financeiro</button>
                 <button onclick="filterCategory('E-commerce')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">E-commerce</button>
                 <button onclick="filterCategory('Vendas')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Vendas</button>
                 <button onclick="filterCategory('Promoções')" class="cat-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium px-4 py-2 rounded-xl text-sm transition-all shrink-0">Promoções</button>
@@ -77,6 +78,14 @@
 
     <script>
         const dashboardsData = [
+            {
+                id: "lancamento-notas",
+                title: "Lançamento de Notas (ERP)",
+                category: "Financeiro",
+                icon: "receipt",
+                url: "https://camilads13.github.io/lan-amentos-de-notas/",
+                desc: "Controle de notas de sexta-feira, status de lançamento, dados ERP e lembretes automáticos."
+            },
             {
                 id: "ruptura",
                 title: "Ruptura da loja online",
@@ -242,7 +251,7 @@
             document.getElementById('modalIcon').innerHTML = `<i data-lucide="${item.icon}" class="w-5 h-5"></i>`;
             document.getElementById('modalExternalLink').href = item.url;
 
-            // ADICIONA TIMESTAMP PARA EVITAR PROBLEMAS DE CACHE NO IFRAME
+            // Evita cache no iframe
             const cacheBustUrl = item.url + (item.url.includes('?') ? '&' : '?') + 'v=' + Date.now();
             document.getElementById('modalIframe').src = cacheBustUrl;
 
